@@ -15,6 +15,13 @@ import { Post as PostModel } from '@prisma/client';
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
+  @Get('drafts')
+  async getDraftPosts(): Promise<PostModel[]> {
+    return this.postService.posts({
+      where: { published: false },
+    });
+  }
+
   @Get('feed')
   async getPublishedPosts(): Promise<PostModel[]> {
     return this.postService.posts({

@@ -28,6 +28,7 @@ export class PostService {
       cursor,
       where,
       orderBy,
+      include: { author: { select: { name: true, email: true } } },
     });
   }
 

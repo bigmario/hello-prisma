@@ -10,19 +10,51 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+}
 
 model User {
-  id  Int  @default(autoincrement()) @id
-  email String @unique
-  name String
-  post Post[]
+  id              Int                  @default(autoincrement()) @id
+  email           String               @unique
+  name            String?
+  role            Role                 @default(USER)
+  post            Post[]
+  profile         Profile?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @default(now()) @updatedAt
+  deletedAt       DateTime?
+}
+
+model Profile {
+  id              Int                  @id @default(autoincrement())
+  bio             String
+  user            User                 @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  userId          Int
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @default(now()) @updatedAt
+  deletedAt       DateTime?
 }
 
 model Post {
-  id Int @default(autoincrement()) @id
-  title String
-  content String?
-  published Boolean? @default(false)
-  author User? @relation(fields: [authorId], references: [id])
-  authorId Int?
+  id              Int                  @default(autoincrement()) @id
+  title           String
+  content         String?
+  published       Boolean?             @default(false)
+  author          User?                @relation(fields: [authorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  authorId        Int?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @default(now()) @updatedAt
+  deletedAt       DateTime?
+  categories      Category[]           @relation(references: [id])
+}
+
+model Category {
+  id              Int                  @id @default(autoincrement())
+  name            String
+  posts           Post[]               @relation(references: [id])
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @default(now()) @updatedAt
+  deletedAt       DateTime?
 }
